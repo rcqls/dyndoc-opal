@@ -224,7 +224,7 @@ module Dyndoc
         }
 
     def initialize(type=:call,start=nil,stop=nil,mode=nil,escape=nil)
-      super
+      super(type,start,stop,mode,escape)
       @type_stop_filter="#!"
     end
   end

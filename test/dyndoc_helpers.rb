@@ -19,13 +19,13 @@ if RUBY_ENGINE == "opal"
  
   # redefinition of StringScanner in js
   # complete path required
-  require '/Users/remy/Github/dyndoc-opal/src/strscan_dyndoc.rb'
+  require '/Users/remy/Github/dyndoc-opal/src/dyndoc/strscan_dyndoc.rb'
 else
   require 'strscan'
   DyndocStringScanner=StringScanner
 end
 
-require '/Users/remy/Github/dyndoc-opal/src/scanner.rb'
+require '/Users/remy/Github/dyndoc-opal/src/dyndoc/scanner.rb'
 
 # pos,[], string=, pre_match, matched, exist?
 #  scan, scan_until , check_until

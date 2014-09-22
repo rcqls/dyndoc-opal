@@ -18,13 +18,20 @@ if RUBY_ENGINE == "opal"
   end
  
   # redefinition of StringScanner in js
-    require 'src/strscan_dyndoc.rb'
+    require 'src/dyndoc/strscan_dyndoc.rb'
 else
   require 'strscan'
   DyndocStringScanner=StringScanner
 end
 
-require 'src/scanner.rb'
+require 'src/dyndoc/scanner.rb'
+require 'src/dyndoc/tmpl/manager.rb'
+require 'src/dyndoc/tmpl/parse_do.rb'
+require 'src/dyndoc/tmpl/eval.rb'
+require 'src/dyndoc/tmpl/extension.rb'
+require 'src/dyndoc/utils.rb'
+require 'src/dyndoc/filter/filter_mngr.rb'
+require 'src/dyndoc/envir.rb'
 
 # pos,[], string=, pre_match, matched, exist?
 #  scan, scan_until , check_until
