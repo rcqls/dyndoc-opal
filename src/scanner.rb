@@ -16,9 +16,9 @@ module Dyndoc
       @tag_type=type
       @tag=@@type[type]
       @start=@tag[:start] unless start
-      @start=/#{@start}/ #if @start.is_a?(::String)
+      @start=/#{@start}/ if @start.is_a? String
       @stop=@tag[:stop] unless stop
-      @stop=/#{@stop}/ #if @stop.is_a?(::String)
+      @stop=/#{@stop}/ if @stop.is_a? String
       @mode=@tag[:mode] unless mode
       @escape={:start=>@tag[:escape_start],:stop=>@tag[:escape_stop]} unless escape
       #mode corresponds to @start[@mode[:start],@mode[:length]] and @stop[@mode[:stop],@mode[:length]]
