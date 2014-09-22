@@ -1,0 +1,6 @@
+Gemfile.lock
+*.log
+bower_components/
+node_modules/
+dist/
+build/
