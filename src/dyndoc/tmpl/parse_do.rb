@@ -214,11 +214,12 @@ p [vars,b2]
 	  #TODO: changer et mettre la condition sur les tags!!!! et non uniquement sur le format!
 	  #HOWTO: b2 non nil s'il existe un document pour lequel cette partie est à évaluer!
         else
-          #if a variable ends with FORMATS element
-          if (ind=vars.rindex(/(#{Dyndoc::FORMATS.join("|")})$/))
-            #do not evaluate unless right format
-            b2=nil unless vars[ind..-1]==@Fmt
-          end
+          # disabled:
+          # #if a variable ends with FORMATS element
+          # if (ind=vars.rindex(/(#{Dyndoc::FORMATS.join("|")})$/))
+          #   #do not evaluate unless right format
+          #   b2=nil unless vars[ind..-1]==@Fmt
+          # end
         end
       end
       return [vars,b2]
@@ -985,101 +986,101 @@ end
 #       end
 #     end
 
-#     def do_input(tex,blck,filter)
-#       tmpl=parse_args(blck[1],filter)
-# #p tmpl
-#       b=make_var_block(blck[2..-1].unshift(:var),filter)
-# #puts "do_input:b";p b
-#       tex += eval_INPUT(tmpl,b,filter)
-#     end
+    def do_input(tex,blck,filter)
+      tmpl=parse_args(blck[1],filter)
+#p tmpl
+      b=make_var_block(blck[2..-1].unshift(:var),filter)
+#puts "do_input:b";p b
+      tex += eval_INPUT(tmpl,b,filter)
+    end
  
-#     def do_require(tex,blck,filter)   
-#       ## just load and parse : read some FUNCs and EXPORT some variables
-#       ## in the header
-# #p blck
-# #p parse_args(blck,filter)
-#       tmpl=parse_args(blck,filter).strip.split("\n")
-# #Dyndoc.warn "require",tmpl
-#       eval_LOAD(tmpl,filter)
-#     end
+    def do_require(tex,blck,filter)   
+      ## just load and parse : read some FUNCs and EXPORT some variables
+      ## in the header
+#p blck
+#p parse_args(blck,filter)
+      tmpl=parse_args(blck,filter).strip.split("\n")
+#Dyndoc.warn "require",tmpl
+      eval_LOAD(tmpl,filter)
+    end
  
-#     def do_func(tex,blck,filter)
-#       call=parse_args(blck[1],filter)
-#       code=blck[2..-1]
-# #p "code func";p code
-#       eval_func(call,code)
-#     end
+    def do_func(tex,blck,filter)
+      call=parse_args(blck[1],filter)
+      code=blck[2..-1]
+#p "code func";p code
+      eval_func(call,code)
+    end
 
-#     def make_def(blck,filter)
-#       call=parse_args(blck[1],filter)
-#       code,arg,var,rbEnvir=nil,[],[:var],nil
-#       i=1
-#       begin 
-#         case blck[i+=1]
-#           when :binding
-#             i,*b2=next_block(blck,i)
-#             rbEnvir=b2[0][1].strip
-#           when :do,:<,:out,:>,:"r<",:"rb<",:"r>",:"R>",:"R<",:"r>>",:rverb,:"rb>>",:rbverb,:"jl>>",:jlverb,:"rb>",:"?",:tag,:"??",:yield,:>>,:"=",:"+",:<<,:"txtl>",:"html>",:"tex>",:"_>"
-#             code = blck[i..-1].unshift(:blck)
-#           when :"," 
-#             i,*b2=next_block(blck,i)
-# #p blck;p b2
-#             #deal with 
-#             b2=b2[0]
-#             if b2[0]==:named
-# =begin
-# if false
-# #Old one!
-# #puts "b2";p b2
-#               b2 << [:main,""] unless b2[2]
-#               arg << b2[1]
-#               var0=b2[2..-1]
-#               var0[0][1]= ":"+b2[1]+"[?]=>" + var0[0][1]
-# 	      var << :"," unless var.length==1
-# #p var0
-# 	      var += var0
-# #next: New one 
-# else
-# =end
-# #puts "b2";p b2
-# 	      # 151108: Adding "!" at the end of the parameter name disables the default ability. This is completed with 
-# 	      arg << (b2[1][-1,1]=="!" ? b2[1][0...-1]+"-USER-" : b2[1]) 
-# #p arg
-# 	      b2[1]+="?"
-# 	      b2 << [:main,""] unless b2[2]      
-# #p b2
-#               var << :"," unless var.length==1
-#               var << b2
-# #end 
-# 	    elsif b2[0]==:main
-# #puts "make_def";p call
-# 	      parse([b2],filter).split(",").map{|v| v.strip}.each{|v|
-# 		var << :"," unless var.length==1
-# 		var << [:named, v+"?" , [:main, ""]]
-# 		arg << v
-# 	      }
-# #p var
-# 	      #var << b2
-#             end
-#           else #just after the arg is a comment and not dealt 
-#             i,*b2=next_block(blck,i)
-#         end
-#       end while i<blck.length-1 and !code
-#       #if no block code is provided (possible for method) nothing to do is represented by the following code!
-#       code=[:blck, :<]  unless code
-#       code=[code]
-# #puts "var";p var
-#       code.unshift(var) unless var.length==1
-# #puts "code def #{call}";p code
-#       call+= ((call.include? "|") ? "," : "|")+arg.join(",") unless arg.empty?
-#       return [call,code,rbEnvir]
-#     end
+    def make_def(blck,filter)
+      call=parse_args(blck[1],filter)
+      code,arg,var,rbEnvir=nil,[],[:var],nil
+      i=1
+      begin 
+        case blck[i+=1]
+          when :binding
+            i,*b2=next_block(blck,i)
+            rbEnvir=b2[0][1].strip
+          when :do,:<,:out,:>,:"r<",:"rb<",:"r>",:"R>",:"R<",:"r>>",:rverb,:"rb>>",:rbverb,:"jl>>",:jlverb,:"rb>",:"?",:tag,:"??",:yield,:>>,:"=",:"+",:<<,:"txtl>",:"html>",:"tex>",:"_>"
+            code = blck[i..-1].unshift(:blck)
+          when :"," 
+            i,*b2=next_block(blck,i)
+#p blck;p b2
+            #deal with 
+            b2=b2[0]
+            if b2[0]==:named
+=begin
+if false
+#Old one!
+#puts "b2";p b2
+              b2 << [:main,""] unless b2[2]
+              arg << b2[1]
+              var0=b2[2..-1]
+              var0[0][1]= ":"+b2[1]+"[?]=>" + var0[0][1]
+	      var << :"," unless var.length==1
+#p var0
+	      var += var0
+#next: New one 
+else
+=end
+#puts "b2";p b2
+	      # 151108: Adding "!" at the end of the parameter name disables the default ability. This is completed with 
+	      arg << (b2[1][-1,1]=="!" ? b2[1][0...-1]+"-USER-" : b2[1]) 
+#p arg
+	      b2[1]+="?"
+	      b2 << [:main,""] unless b2[2]      
+#p b2
+              var << :"," unless var.length==1
+              var << b2
+#end 
+	    elsif b2[0]==:main
+#puts "make_def";p call
+	      parse([b2],filter).split(",").map{|v| v.strip}.each{|v|
+		var << :"," unless var.length==1
+		var << [:named, v+"?" , [:main, ""]]
+		arg << v
+	      }
+#p var
+	      #var << b2
+            end
+          else #just after the arg is a comment and not dealt 
+            i,*b2=next_block(blck,i)
+        end
+      end while i<blck.length-1 and !code
+      #if no block code is provided (possible for method) nothing to do is represented by the following code!
+      code=[:blck, :<]  unless code
+      code=[code]
+#puts "var";p var
+      code.unshift(var) unless var.length==1
+#puts "code def #{call}";p code
+      call+= ((call.include? "|") ? "," : "|")+arg.join(",") unless arg.empty?
+      return [call,code,rbEnvir]
+    end
 
-#     def do_def(tex,blck,filter)
-#       call,code,rbEnvir=make_def(blck,filter)
-# #puts "do_def";p call;p code;p rbEnvir
-#       eval_func(call,code,rbEnvir)
-#     end
+    def do_def(tex,blck,filter)
+      call,code,rbEnvir=make_def(blck,filter)
+#puts "do_def";p call;p code;p rbEnvir
+      eval_func(call,code,rbEnvir)
+    end
 
 #     def do_meth(tex,blck,filter)
 # #puts "do_meth";p blck
@@ -1167,100 +1168,100 @@ end
 #       #tex << eval_CALL("new",b,filter)
 #     end
 
-#     def make_call(blck,filter)
-#       code,codename,var={"default"=>[:blck]},"default",[]
-#       i=-1
-#       begin 
-#         case blck[i+=1]
-#           when :blck
-#             #todo: change codename with the arg of blck
-#             i,*b2=next_block(blck,i)
-#             codename=parse(b2,filter).strip
-#             code[codename]=[:blck]
-#           when :do,:<,:out,:>,:"r<",:"rb<",:"r>",:"rb>",:nl,:"\n",:>>,:"?",:tag,:"??",:"=",:"+",:<<,:"%" #NO :yield because of infinite loops 
-#             code[codename] << blck[i]
-#             i,*b2=next_block(blck,i)
-#             code[codename] += b2
-#           when :var,:"," 
-#             var << blck[i]
-#             i,*b2=next_block(blck,i)
-# #puts "var et ,";p b2
-#             var += b2
-# 	  else
-# 	    var << :","
-# 	    res=[:named,blck[i].to_s]
-# 	    i,*b2=next_block(blck,i)
-# 	    res += b2
-# 	    var << res
-# #p var
-#         end
-#       end while i<blck.length-1
-#       code.each_key{|k| code.delete(k) if code[k].length==1 }
-#       return [var,code]
-#     end
+    def make_call(blck,filter)
+      code,codename,var={"default"=>[:blck]},"default",[]
+      i=-1
+      begin 
+        case blck[i+=1]
+          when :blck
+            #todo: change codename with the arg of blck
+            i,*b2=next_block(blck,i)
+            codename=parse(b2,filter).strip
+            code[codename]=[:blck]
+          when :do,:<,:out,:>,:"r<",:"rb<",:"r>",:"rb>",:nl,:"\n",:>>,:"?",:tag,:"??",:"=",:"+",:<<,:"%" #NO :yield because of infinite loops 
+            code[codename] << blck[i]
+            i,*b2=next_block(blck,i)
+            code[codename] += b2
+          when :var,:"," 
+            var << blck[i]
+            i,*b2=next_block(blck,i)
+#puts "var et ,";p b2
+            var += b2
+	  else
+	    var << :","
+	    res=[:named,blck[i].to_s]
+	    i,*b2=next_block(blck,i)
+	    res += b2
+	    var << res
+#p var
+        end
+      end while i<blck.length-1
+      code.each_key{|k| code.delete(k) if code[k].length==1 }
+      return [var,code]
+    end
  
-#     def do_call(tex,blck,filter)
-# #puts "do_call";p blck
-#       call=parse_args(blck[1],filter)
-# #puts "do_call";p call
-# #p args
-#       #this corrects a bad behavior of the scanner when the call directive is called directly.
-#       if blck[2]==:","
-# 	var_block= blck[3..-1].unshift(:var)
-#       else
-# 	var_block=blck[2..-1].unshift(:var)
-#       end
-# #puts "var_block";p var_block
-#       var,code=make_call(var_block,filter)
-# #puts "VAR"
-# #p code
-# #puts "do_call:var";p var
+    def do_call(tex,blck,filter)
+#puts "do_call";p blck
+      call=parse_args(blck[1],filter)
+#puts "do_call";p call
+#p args
+      #this corrects a bad behavior of the scanner when the call directive is called directly.
+      if blck[2]==:","
+	var_block= blck[3..-1].unshift(:var)
+      else
+	var_block=blck[2..-1].unshift(:var)
+      end
+#puts "var_block";p var_block
+      var,code=make_call(var_block,filter)
+#puts "VAR"
+#p code
+#puts "do_call:var";p var
 
-# #p var
-# =begin
-#       if @meths.include? call
-#         @meth_var=(var[3..-1] ? var[0,1]+var[3..-1] : nil)
-#         var=var[0..1]
-#       end
-# =end
-# #puts "VAR2";p blck[2..-1].unshift(:var)
-# #puts "var block (AV)";p var
+#p var
+=begin
+      if @meths.include? call
+        @meth_var=(var[3..-1] ? var[0,1]+var[3..-1] : nil)
+        var=var[0..1]
+      end
+=end
+#puts "VAR2";p blck[2..-1].unshift(:var)
+#puts "var block (AV)";p var
 
-#       #19/10/08: this complete the method name if necessary in order to provide args! Now, meth may be used with partial argument completed in the R spirit! 
-#       call4args,vars4args=call.dup,[]
-#       isMeth=CallFilter.isMeth?(call)
-# ##puts "#{call} isMeth => #{isMeth}!!!"
-#       if isMeth
-# #puts "meth:call=#{call}"
-# 	      obj=parse((var[1][0]==:named ? var[1][2..-1] : [var[1]] ),filter)
-# #puts "obj=#{obj}"
-# 	      if @vars.extract(obj) and @vars.extract(obj).respond_to? "keys"
-# #puts "extract obj";p @vars.extract(obj).keys
-# 	        vars4args=(@vars.extract(obj).keys.select{|e| e.is_a? String} - ["Renvir","ObjectName","Class"]).map{|e| "."+e}
-# 	  #obj=parse([blck[2]],filter)
-# #p @vars[obj+".Class"]
-# 	        get_method(call4args,@vars[obj+".Class"].split(",")) if @vars[obj+".Class"]
-# 	        #=> call4args is modified inside get_method!!!
-# 	      end
-#       end
+      #19/10/08: this complete the method name if necessary in order to provide args! Now, meth may be used with partial argument completed in the R spirit! 
+      call4args,vars4args=call.dup,[]
+      isMeth=CallFilter.isMeth?(call)
+##puts "#{call} isMeth => #{isMeth}!!!"
+      if isMeth
+#puts "meth:call=#{call}"
+	      obj=parse((var[1][0]==:named ? var[1][2..-1] : [var[1]] ),filter)
+#puts "obj=#{obj}"
+	      if @vars.extract(obj) and @vars.extract(obj).respond_to? "keys"
+#puts "extract obj";p @vars.extract(obj).keys
+	        vars4args=(@vars.extract(obj).keys.select{|e| e.is_a? String} - ["Renvir","ObjectName","Class"]).map{|e| "."+e}
+	  #obj=parse([blck[2]],filter)
+#p @vars[obj+".Class"]
+	        get_method(call4args,@vars[obj+".Class"].split(",")) if @vars[obj+".Class"]
+	        #=> call4args is modified inside get_method!!!
+	      end
+      end
 
-# #puts "call4args=#{call4args}" 
-# #p @args[call4args]   
-#       args=(@args[call4args] ? @args[call4args].dup : nil)
-#       args+=vars4args if args
-# #puts "args";p args
-# #TODO: for method, args has to be initialized by finding the class of the object! Pb: how to know that it is a method => make a method in Call???
-#       b=(var.length==1 ? [] : make_var_block(var,filter,args)) 
-# #puts "var block (AP)";p b
-#       b,meth_args_b=CallFilter.argsMeth(call,b) 
-# #puts "call";p call
-# #p @calls[call]
-# #puts "var2 block";p b
-# #p meth_args_b
+#puts "call4args=#{call4args}" 
+#p @args[call4args]   
+      args=(@args[call4args] ? @args[call4args].dup : nil)
+      args+=vars4args if args
+#puts "args";p args
+#TODO: for method, args has to be initialized by finding the class of the object! Pb: how to know that it is a method => make a method in Call???
+      b=(var.length==1 ? [] : make_var_block(var,filter,args)) 
+#puts "var block (AP)";p b
+      b,meth_args_b=CallFilter.argsMeth(call,b) 
+#puts "call";p call
+#p @calls[call]
+#puts "var2 block";p b
+#p meth_args_b
 
-# #puts "call:out";p eval_CALL(call,b,filter)
-#       tex += eval_CALL(call,b,filter,meth_args_b,code)
-#     end
+#puts "call:out";p eval_CALL(call,b,filter)
+      tex += eval_CALL(call,b,filter,meth_args_b,code)
+    end
 
 
 #     def make_style_meth(meth,klass,blck)
@@ -1561,26 +1562,26 @@ end
 #     end
 # =end
 
-#     def do_if(tex,blck,filter)
-#       i,cond=-1,nil
-# #p blck
-#       begin
-#         filter.outType=":rb"
-#         case blck[i+=1]
-#           when :if, :elsif
-# #puts "do_if:blck[i+1]";p blck[i+1]
-#             cond=eval_args(blck[i+=1],filter)
-#           when :unless
-#             cond=!eval_args(blck[i+=1],filter)
-#           when :else
-#             cond= true
-#         end 
-#         filter.outType=nil
-#         i,*b2=next_block(blck,i)
-#         tex += parse(b2,filter) if cond
-#       end while !cond and i<blck.length-1
-# #puts "tex";p tex
-#     end
+    def do_if(tex,blck,filter)
+      i,cond=-1,nil
+#p blck
+      begin
+        filter.outType=":rb"
+        case blck[i+=1]
+          when :if, :elsif
+#puts "do_if:blck[i+1]";p blck[i+1]
+            cond=eval_args(blck[i+=1],filter)
+          when :unless
+            cond=!eval_args(blck[i+=1],filter)
+          when :else
+            cond= true
+        end 
+        filter.outType=nil
+        i,*b2=next_block(blck,i)
+        tex << parse(b2,filter) if cond
+      end while !cond and i<blck.length-1
+#puts "tex";p tex
+    end
 
 
 # #BIENTOT OBSOLETE!
@@ -1609,38 +1610,38 @@ end
    
    
 
-#     def do_case(tex,blck,filter)
-#       choices=parse_args(blck[1],filter).strip
-# #puts "choices";p choices
-# #p blck
-#       var="__elt_case__"
-#       tmp=choices.scan(/(^\w*):(.*)/)[0]
-#       var,choices=tmp[0].strip,tmp[1].strip if tmp
-#       choices=choices.split(",").map{|e| e.strip}
-#       choices.each{|choice|
-#         i=1
-#         todo,cond,all=true,false,false
-#         begin
-#           case blck[i+=1]
-#           when :when
-# #puts "when";p blck[i]
-#             c=parse_args(blck[i+=1],filter).strip.split(",").map{|e| e.strip}
-# #p "#{choice} in #{c.join(",")}"
-#             cond=(c.include? choice)
-#             all |= cond
-#           when :else
-#             cond=!all
-#           end
-#           i,*b2=next_block(blck,i)
-#           @vars[var]=choice
-#           tex += parse(b2,filter) if cond
-# #if cond
-# #  puts "tex in case";p tex
-# #end
-#         end while todo and i<blck.length-1 
-#       }
-# #puts "tex in case";p tex
-#     end
+    def do_case(tex,blck,filter)
+      choices=parse_args(blck[1],filter).strip
+#puts "choices";p choices
+#p blck
+      var="__elt_case__"
+      tmp=choices.scan(/(^\w*):(.*)/)[0]
+      var,choices=tmp[0].strip,tmp[1].strip if tmp
+      choices=choices.split(",").map{|e| e.strip}
+      choices.each{|choice|
+        i=1
+        todo,cond,all=true,false,false
+        begin
+          case blck[i+=1]
+          when :when
+#puts "when";p blck[i]
+            c=parse_args(blck[i+=1],filter).strip.split(",").map{|e| e.strip}
+#p "#{choice} in #{c.join(",")}"
+            cond=(c.include? choice)
+            all |= cond
+          when :else
+            cond=!all
+          end
+          i,*b2=next_block(blck,i)
+          @vars[var]=choice
+          tex << parse(b2,filter) if cond
+#if cond
+#  puts "tex in case";p tex
+#end
+        end while todo and i<blck.length-1 
+      }
+#puts "tex in case";p tex
+    end
 
 #     def do_r(tex,blck,filter)
 #       newblck=blck[0]

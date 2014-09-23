@@ -77,7 +77,7 @@ module Dyndoc
       ## To remove: Dyndoc.setRootDoc(@cfg[:rootDoc],Dyndoc.sysRootDoc("root_"+@cfg[:enc]),false)
       # TemplateManager.initR if $cfg_dyn[:langs].include? :R
       # TemplateManager.initJulia if $cfg_dyn[:langs].include? :jl
-      #rbenvir_init(binding)
+      rbenvir_init(binding)
       @rEnvir=["Global"]
       @envirs={}
       @fmtContainer=[]

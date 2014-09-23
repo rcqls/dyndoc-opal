@@ -1,7 +1,11 @@
-module CqlsDoc
-  module V3
+module Dyndoc
+  module Opal
   
     class TemplateManager
+
+      def binding
+        `this`
+      end
 
       def rbenvir_init(envir)
         @rbEnvir=[envir] 
@@ -19,8 +23,8 @@ module CqlsDoc
           inRb=":new" if ["new","none",":none","nil"].include? inRb
           @rbEnvirs={} unless @rbEnvirs
 #p inRb
-          @rbEnvirs[inRb]=rbenvir_new if inRb==":new" or !@rbEnvirs[inRb]
-          @rbEnvirs[inRb]=envir if envir and inRb!=":new"
+          @rbEnvirs[inRb]=rbenvir_new if inRb == ":new" or !@rbEnvirs[inRb]
+          @rbEnvirs[inRb]=envir if envir and inRb != ":new"
 #puts "rbenvir_go_to";p envir
           @rbEnvir.unshift(@rbEnvirs[inRb])
         end

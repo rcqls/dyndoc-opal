@@ -1,4 +1,4 @@
-if RUBY_ENGINE == "opal"
+#if RUBY_ENGINE == "opal"
   require 'opal'
   require 'encoding' # needed for String.bytes method
 
@@ -19,19 +19,22 @@ if RUBY_ENGINE == "opal"
  
   # redefinition of StringScanner in js
     require 'src/dyndoc/strscan_dyndoc.rb'
-else
-  require 'strscan'
-  DyndocStringScanner=StringScanner
-end
+#else
+#  require 'strscan'
+#  DyndocStringScanner=StringScanner
+#end
 
 require 'src/dyndoc/scanner.rb'
 require 'src/dyndoc/tmpl/manager.rb'
 require 'src/dyndoc/tmpl/parse_do.rb'
 require 'src/dyndoc/tmpl/eval.rb'
 require 'src/dyndoc/tmpl/extension.rb'
+require 'src/dyndoc/tmpl/oop.rb'
+require 'src/dyndoc/tmpl/rbenvir.rb'
 require 'src/dyndoc/utils.rb'
 require 'src/dyndoc/filter/filter_mngr.rb'
 require 'src/dyndoc/envir.rb'
+require 'opal-parser'
 
 # pos,[], string=, pre_match, matched, exist?
 #  scan, scan_until , check_until

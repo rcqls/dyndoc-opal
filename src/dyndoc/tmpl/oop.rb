@@ -1,5 +1,5 @@
-module CqlsDoc
-  module V3
+module Dyndoc
+  module Opal
 
   class TemplateManager
 
@@ -35,17 +35,17 @@ module CqlsDoc
         res["ObjectName"]={:val=>[$1]}
         res["objR"]={:val=>[($2 and !$2.empty?) ? $2 : $1]}
         res["Class"]={:val=>["class(#{res["objR"][:val]})".to_R.to_a.map{|rclass| "RClass"+rclass.capitalize}.join(",")+",Object"]}
-      elsif /^\s*R\((.*)\)\s*$/ =~ str #for R expression
-        require 'digest'
-        res["ObjectName"]={:val=>["R"+Digest::SHA1.hexdigest($1)]}
-        #p [$1,$2]
-        res["objR"]={:val=>[$1]}
-        res["Class"]={:val=>["class(#{res["objR"][:val]})".to_R.to_a.map{|rclass| "RClass"+rclass.capitalize}.join(",")+",Object"]}
-      elsif /^\s*(?:Rb|Ruby|rb|ruby)\((.*)\)\s*$/ =~ str
-        require 'digest'
-        res["ObjectName"]={:val=>["Rb"+Digest::SHA1.hexdigest($1)]}
-        res["objRb"]={:val=>[$1]}
-        res["Class"]={:val=>["RbClass"+res["objRb"][:val].class+",Object"]}
+      ######disabled: elsif /^\s*R\((.*)\)\s*$/ =~ str #for R expression
+      #   require 'digest'
+      #   res["ObjectName"]={:val=>["R"+Digest::SHA1.hexdigest($1)]}
+      #   #p [$1,$2]
+      #   res["objR"]={:val=>[$1]}
+      #   res["Class"]={:val=>["class(#{res["objR"][:val]})".to_R.to_a.map{|rclass| "RClass"+rclass.capitalize}.join(",")+",Object"]}
+      # elsif /^\s*(?:Rb|Ruby|rb|ruby)\((.*)\)\s*$/ =~ str
+      #   require 'digest'
+      #   res["ObjectName"]={:val=>["Rb"+Digest::SHA1.hexdigest($1)]}
+      #   res["objRb"]={:val=>[$1]}
+      #   res["Class"]={:val=>["RbClass"+res["objRb"][:val].class+",Object"]}
       end   
       p res           
       return res

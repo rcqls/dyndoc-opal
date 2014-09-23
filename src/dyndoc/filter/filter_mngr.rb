@@ -79,7 +79,7 @@ module Dyndoc
 	  if res.all?
 	    res.map{|k,o| 
 	      o=FilterManager.eval_options(o)
-	      k.strip!
+	      k=k.strip
 	      if k[0,2]=="::"
       		k=k[1..-1]
       		o << :global
@@ -102,7 +102,7 @@ module Dyndoc
 	  key,opts,out,str=s.scan(/^\s*\:(\:?[#{FilterManager.letters}\-\._]*\*?)(?:\[(.*)\])?\s*=(=?)>(.*)/)[0]
 #puts "key";p key
 	  if key
-	    opts.strip! if opts
+	    opts=opts.strip if opts
 	    opts=FilterManager.eval_options(opts)
 	    if key[0,1]==":"
 	      key=key[1..-1]
@@ -114,7 +114,7 @@ module Dyndoc
 	      newarray << key
 	    end
 	    opts << :out unless out.empty? ## "==>" means that opts includes :out
-	    str.strip!
+	    str=str.strip
 	    ## test if string
 	    tmp=str.scan(/^[\"\'](.*)[\"\']$/)[0]
 #p tmp
@@ -256,7 +256,7 @@ module Dyndoc
 	      end
 	      #special treatment for null array and hash
 	      if v.is_a? Hash and v[:val] and ["0[]","0{}"].include? v[:val][0].strip
-	        v[:val][0].strip!
+	        v[:val][0]=v[:val][0].strip
 	        v=( v[:val][0][1,1]=="[" ? [] : {} )
 	      end
 #puts "import_dict:v (AP)";p v

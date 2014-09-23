@@ -7,8 +7,8 @@ task :default => :dist
 
 desc 'Build opal.js and dyndoc.js to build/'
 task :dist do
-  Opal::Processor.method_missing_enabled = false
-  Opal::Processor.const_missing_enabled = false
+  Opal::Processor.method_missing_enabled = true #false
+  Opal::Processor.const_missing_enabled = true #false
   Opal::Processor.source_map_enabled = false
   Opal::Processor.dynamic_require_severity = :warning
 
@@ -26,7 +26,7 @@ task :dist do
   dyndoc = env['src/dyndoc.rb']
   full_source = dyndoc.to_s
   File.open("build/dyndoc.js#{compress ? '.gz' : nil}","w") do |f|
-    f << full_source.gsub(/(var\ Opal)/,'//disabled (see before): \1')
+    f << full_source.gsub(/(var\ Opal.*)/,'//disabled (see before): \1'+"\n" +'var $opal = Opal')
   end
 
 
