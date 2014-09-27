@@ -234,7 +234,7 @@ module Dyndoc
           end
         }
 #p helpers
-        Dyndoc::V3::Helpers.module_eval(helpers)
+        Dyndoc::Opal::Helpers.module_eval(helpers)
       end 
     end
  

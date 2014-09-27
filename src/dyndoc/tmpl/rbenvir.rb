@@ -4,7 +4,8 @@ module Dyndoc
     class TemplateManager
 
       def binding
-        `this`
+        # closure
+        `function(){}`
       end
 
       def rbenvir_init(envir)

@@ -31,10 +31,32 @@ require 'src/dyndoc/tmpl/eval.rb'
 require 'src/dyndoc/tmpl/extension.rb'
 require 'src/dyndoc/tmpl/oop.rb'
 require 'src/dyndoc/tmpl/rbenvir.rb'
-require 'src/dyndoc/utils.rb'
+require 'src/dyndoc/helpers/core.rb'
+require 'src/dyndoc/helpers/parser.rb'
+require 'src/dyndoc/helpers/utils.rb'
 require 'src/dyndoc/filter/filter_mngr.rb'
+require 'src/dyndoc/filter/server.rb'
 require 'src/dyndoc/envir.rb'
 require 'opal-parser'
+
+module Dyndoc
+  def Dyndoc.stdout
+          old_stdout=$stdout;$stdout=STDOUT
+          yield
+          $stdout=old_stdout
+  end
+
+  def Dyndoc.warn(*txt) # 1 component => puts, more components => puts + p + p + ....
+          Dyndoc.stdout  do
+                  if txt.length==1
+                          puts txt[0]
+                  else
+                          puts txt[0]
+                          txt[1..-1].each do |e| p e end
+                  end
+          end
+  end
+end
 
 # pos,[], string=, pre_match, matched, exist?
 #  scan, scan_until , check_until

@@ -404,6 +404,7 @@ p [vars,b2]
   	          else
   	            mode,code=code[0,1],code[1..-1] if ["&","|"].include? code[0,1]
   	            cond2=@rbEnvir[0].eval(code)
+                ##Dyndoc.warn "cond2",[cond2,@rbEnvir[0]]
   	            condArch << cond
   	            if mode=="&"
   		            cond=  cond & cond2
@@ -1819,86 +1820,86 @@ else
 #       filter.outType=nil
 #     end
  
-#     def dynBlock_in_doLangBlock?(blck)
-#       blck.map{|b| b.respond_to? "[]" and [:>,:<,:<<].include? b[0] }.any?
-#     end
+    def dynBlock_in_doLangBlock?(blck)
+      blck.map{|b| b.respond_to? "[]" and [:>,:<,:<<].include? b[0] }.any?
+    end
 
-#     attr_accessor :doLangBlock    
+    #attr_accessor :doLangBlock    
 
-#     def make_do_lang_blck(blck,id,lang=:rb)
-#       #p blck
-#       cptCode=-1
-# ## Dyndoc.warn "make_do_lang_blck",blck
-#       blck2=blck.map{|b|
-# ## Dyndoc.warn "b",b
-#         if b.respond_to? "[]" and [:>,:<,:<<].include? b[0]
-#           cptCode+=1
-#           @doLangBlock[id][:code][cptCode]=Utils.escape_delim!(b[1])
-#           codeLangBlock = "Dyndoc.curDyn.tmpl.eval"+ lang.to_s.capitalize+"Block(#{id.to_s},#{cptCode.to_s},:#{b[0].to_s},:#{lang})"
+    def make_do_lang_blck(blck,id,lang=:rb)
+      #p blck
+      cptCode=-1
+## Dyndoc.warn "make_do_lang_blck",blck
+      blck2=blck.map{|b|
+## Dyndoc.warn "b",b
+        if b.respond_to? "[]" and [:>,:<,:<<].include? b[0]
+          cptCode+=1
+          @doLangBlock[id][:code][cptCode]=Utils.escape_delim!(b[1])
+          codeLangBlock = "Dyndoc.curDyn.tmpl.eval"+ lang.to_s.capitalize+"Block(#{id.to_s},#{cptCode.to_s},:#{b[0].to_s},:#{lang})"
 
-#           @doLangBlockEnvs=[0] unless @doLangBlockEnvs #never empty?
-#           @doLangBlockEnvs << (doLangBlockEnv=@doLangBlockEnvs.max + 1)
-#           @doLangBlock[id][:env] << doLangBlockEnv
+          @doLangBlockEnvs=[0] unless @doLangBlockEnvs #never empty?
+          @doLangBlockEnvs << (doLangBlockEnv=@doLangBlockEnvs.max + 1)
+          @doLangBlock[id][:env] << doLangBlockEnv
           
-#           ## NEW: Special treatment for R code because environment is different from GlobalEnv
-#           case lang
-#           when :R
-#             # first, get the environment
-#             codeLangBlock="{.GlobalEnv$.env4dyn$rbBlock#{doLangBlockEnv.to_s} <- environment();.rb(\""+codeLangBlock+"\");invisible()}"
-#             # use it to evaluate the dyn block with R stuff! (renv) 
-#             @doLangBlock[id][:code][cptCode]= "[#<]{#renv]rbBlock#{doLangBlockEnv.to_s}+[#}[#>]"+@doLangBlock[id][:code][cptCode]+"[#<]{#renv]rbBlock#{doLangBlockEnv.to_s}-[#}"
-#           when :jl
-#             # Nothing since no binding or environment in Julia
-#             # Toplevel used
-#             codeLangBlock="begin Ruby.run(\""+codeLangBlock+"\") end"
-#             @doLangBlock[id][:code][cptCode]= "[#>]"+@doLangBlock[id][:code][cptCode]
-#           when :rb
-#             ##DEBUG: codeRbBlock="begin $curDyn.tmpl.rbenvir_go_to(:rbBlock#{rbBlockEnv.to_s},binding);p \"rbBlock#{doBlockEnv.to_s}\";p \"rbCode=#{codeRbBlock}\";$result4BlockCode="+codeRbBlock+";$curDyn.tmpl.rbenvir_back_from(:rbBlock#{doLangBlockEnv.to_s});$result4BlockCode; end" 
-#             codeLangBlock="begin Dyndoc.curDyn.tmpl.rbenvir_go_to(:rbBlock#{doLangBlockEnv.to_s},binding);$result4BlockCode="+codeLangBlock+";Dyndoc.curDyn.tmpl.rbenvir_back_from(:rbBlock#{doLangBlockEnv.to_s});$result4BlockCode; end"    
-#           end
-#           case lang
-#           when :R 
-#             process_r(@doLangBlock[id][:code][cptCode])
-#           when :jl
-#             # TODO
-#             process_jl(@doLangBlock[id][:code][cptCode])
-#           when :rb
-#             process_rb(@doLangBlock[id][:code][cptCode])
-#           end
-#           [:main,codeLangBlock]
-#         else
-#           b
-#         end
-#       }
-# ## Dyndoc.warn  "cptRb",cptRb
-# ## Dyndoc.warn "blck2",blck2
-#       blck2
-#     end
+          ## NEW: Special treatment for R code because environment is different from GlobalEnv
+          case lang
+          when :R
+            # first, get the environment
+            codeLangBlock="{.GlobalEnv$.env4dyn$rbBlock#{doLangBlockEnv.to_s} <- environment();.rb(\""+codeLangBlock+"\");invisible()}"
+            # use it to evaluate the dyn block with R stuff! (renv) 
+            @doLangBlock[id][:code][cptCode]= "[#<]{#renv]rbBlock#{doLangBlockEnv.to_s}+[#}[#>]"+@doLangBlock[id][:code][cptCode]+"[#<]{#renv]rbBlock#{doLangBlockEnv.to_s}-[#}"
+          when :jl
+            # Nothing since no binding or environment in Julia
+            # Toplevel used
+            codeLangBlock="begin Ruby.run(\""+codeLangBlock+"\") end"
+            @doLangBlock[id][:code][cptCode]= "[#>]"+@doLangBlock[id][:code][cptCode]
+          when :rb
+            ##DEBUG: codeRbBlock="begin $curDyn.tmpl.rbenvir_go_to(:rbBlock#{rbBlockEnv.to_s},binding);p \"rbBlock#{doBlockEnv.to_s}\";p \"rbCode=#{codeRbBlock}\";$result4BlockCode="+codeRbBlock+";$curDyn.tmpl.rbenvir_back_from(:rbBlock#{doLangBlockEnv.to_s});$result4BlockCode; end" 
+            codeLangBlock="begin Dyndoc.curDyn.tmpl.rbenvir_go_to(:rbBlock#{doLangBlockEnv.to_s},binding);$result4BlockCode="+codeLangBlock+";Dyndoc.curDyn.tmpl.rbenvir_back_from(:rbBlock#{doLangBlockEnv.to_s});$result4BlockCode; end"    
+          end
+          case lang
+          when :R 
+            process_r(@doLangBlock[id][:code][cptCode])
+          when :jl
+            # TODO
+            process_jl(@doLangBlock[id][:code][cptCode])
+          when :rb
+            @doLangBlock[id][:code][cptCode]=process_rb(@doLangBlock[id][:code][cptCode])
+          end
+          [:main,codeLangBlock]
+        else
+          b
+        end
+      }
+## Dyndoc.warn  "cptRb",cptRb
+## Dyndoc.warn "blck2",blck2
+      blck2
+    end
 
-#     def evalRbBlock(id,cpt,tag,lang=:rb)
-# ## Dyndoc.warn "@doLangBlock[#{id.to_s}][:code][#{cpt.to_s}]",@doLangBlock[id][:code][cpt]#,@doLangBlock[id][:filter]
-#       ## this deals with the problem of newBlcks!
-#       ##puts "block_normal";p blckMode_normal?
-#       code=(blckMode_normal? ? @doLangBlock[id][:code][cpt] : "{#blckAnyTag]"+@doLangBlock[id][:code][cpt]+"[#blckAnyTag}" )
-#       #puts "code";p code
-#       @doLangBlock[id][:out]=parse(code,@doLangBlock[id][:filter])
-#       ##Dyndoc.warn "evalRbBlock:doLangBlock",[id,code,@doLangBlock[id][:out]] if tag == :>
+    def evalRbBlock(id,cpt,tag,lang=:rb)
+## Dyndoc.warn "@doLangBlock[#{id.to_s}][:code][#{cpt.to_s}]",@doLangBlock[id][:code][cpt]#,@doLangBlock[id][:filter]
+      ## this deals with the problem of newBlcks!
+      ##puts "block_normal";p blckMode_normal?
+      code=(blckMode_normal? ? @doLangBlock[id][:code][cpt] : "{#blckAnyTag]"+@doLangBlock[id][:code][cpt]+"[#blckAnyTag}" )
+      #puts "code";p code
+      @doLangBlock[id][:out]=parse(code,@doLangBlock[id][:filter])
+      ##Dyndoc.warn "evalRbBlock:doLangBlock",[id,code,@doLangBlock[id][:out]] if tag == :>
 
-#       #########################################
-#       ## THIS IS FOR OLD
-#       ##@doLangBlock[id][:tex] << @doLangBlock[id][:out] if tag == :>
-#       ## THIS IS NEW
-#       print @doLangBlock[id][:out] if tag == :>
-#       ## 
-#       #Dyndoc.warn "EVALRBBLOCK: @doLangBlock[id][:out]",@doLangBlock[id][:out] if tag == :>
-#       #######################################
+      #########################################
+      ## THIS IS FOR OLD
+      ##@doLangBlock[id][:tex] << @doLangBlock[id][:out] if tag == :>
+      ## THIS IS NEW
+      print @doLangBlock[id][:out] if tag == :>
+      ## 
+      #Dyndoc.warn "EVALRBBLOCK: @doLangBlock[id][:out]",@doLangBlock[id][:out] if tag == :>
+      #######################################
 
-#       if tag == :<<
-#         return ( lang==:R ? RServer.output(@doLangBlock[id][:out],@rEnvir[0],true) : eval(@doLangBlock[id][:out]) )
-#       else
-#         return @doLangBlock[id][:out]
-#       end  
-#     end
+      if tag == :<<
+        return ( lang==:R ? RServer.output(@doLangBlock[id][:out],@rEnvir[0],true) : eval(@doLangBlock[id][:out]) )
+      else
+        return @doLangBlock[id][:out]
+      end  
+    end
 
 # =begin DO NOT REMOVE: OLD STUFF (just in case the experimental one fails!!!)
 #     def do_rb(tex,blck,filter)
@@ -1940,52 +1941,52 @@ else
 #     end
 # =end
 
-# #=begin NEW STUFF!!!
-#     def do_rb(tex,blck,filter)
-#       require 'stringio'
-#       @rbIO=[] unless @rbIO
-#       @rbIO << (blck[0]==:"rb>" ? StringIO.new : STDOUT)
-#       $stdout=@rbIO[-1]
+#=begin NEW STUFF!!!
+    def do_rb(tex,blck,filter)
+      require 'stringio'
+      @rbIO=[] unless @rbIO
+      @rbIO << (blck[0]==:"rb>" ? StringIO.new : STDOUT)
+      $stdout=@rbIO[-1]
 
-#       ## Dyndoc.warn "blck",blck
-#       ## Dyndoc.warn "do_rb binding",binding,local_variables
-#       dynBlock=dynBlock_in_doLangBlock?(blck)
-#       if dynBlock 
-#         @doLangBlock=[] unless @doLangBlock
-#         @doLangBlock << {:tex=>'',:code=>[],:out=>'',:filter=>filter,:env=>[]} #@filterRbBlock}
-#         rbBlockId=@doLangBlock.length-1
-#       end
-#       ## this is ruby code!
-#       filter.outType=":rb"
-#       ## Dyndoc.warn "do_rb",filter.envir.local
-#       blck=make_do_lang_blck(blck,rbBlockId)
-#       ## Dyndoc.warn "do_rb",blck
-#       code = parse_args(blck,filter)
-#       ## Dyndoc.warn "rb code="+code
-#       process_rb(code) if Utils.raw_code_to_process
-#       ## Dyndoc.warn "rb CODE="+code
-#       res=eval_RbCODE(code,filter)
+      ## Dyndoc.warn "blck",blck
+      ## Dyndoc.warn "do_rb binding",binding,local_variables
+      dynBlock=dynBlock_in_doLangBlock?(blck)
+      if dynBlock 
+        @doLangBlock=[] unless @doLangBlock
+        @doLangBlock << {:tex=>'',:code=>[],:out=>'',:filter=>filter,:env=>[]} #@filterRbBlock}
+        rbBlockId=@doLangBlock.length-1
+      end
+      ## this is ruby code!
+      filter.outType=":rb"
+      ## Dyndoc.warn "do_rb",filter.envir.local
+      blck=make_do_lang_blck(blck,rbBlockId)
+      ## Dyndoc.warn "do_rb",blck
+      code = parse_args(blck,filter)
+      ## Dyndoc.warn "rb code="+code
+      ####disabled: process_rb(code) if Utils.raw_code_to_process
+      ## Dyndoc.warn "rb CODE="+code
+      res=eval_RbCODE(code,filter)
 
-#       if blck[0]==:"rb>"
-#         tex2=@rbIO.pop.string
-# #Dyndoc.warn "res",res
-# #Dyndoc.warn "RbRbRbRbRbRbRb:", (tex2.empty? ? res : tex2)
-#         tex += (tex2.empty? ? res : tex2)
-#       else
-#         @rbIO.pop
-#       end
+      if blck[0]==:"rb>"
+        tex2=@rbIO.pop.string
+#Dyndoc.warn "res",res
+#Dyndoc.warn "RbRbRbRbRbRbRb:", (tex2.empty? ? res : tex2)
+        tex += (tex2.empty? ? res : tex2)
+      else
+        @rbIO.pop
+      end
 
-#       ## revert all the stuff
-#       if dynBlock
-#         @doLangBlockEnvs -= @doLangBlock[rbBlockId][:env] #first remove useless envRs
-#         @doLangBlock.pop
-#       end
-#       $stdout=@rbIO.empty? ? STDOUT : @rbIO[-1]
+      ## revert all the stuff
+      if dynBlock
+        @doLangBlockEnvs -= @doLangBlock[rbBlockId][:env] #first remove useless envRs
+        @doLangBlock.pop
+      end
+      $stdout=@rbIO.empty? ? STDOUT : @rbIO[-1]
       
-#       filter.outType=nil
-#       ## Dyndoc.warn "SORTIE RB!",dynBlock,blck,tex2
-#     end
-# #=end
+      filter.outType=nil
+      ## Dyndoc.warn "SORTIE RB!",dynBlock,blck,tex2
+    end
+#=end
 
 
 #     def evalRBlock(id,cpt,tag,lang=:R)
